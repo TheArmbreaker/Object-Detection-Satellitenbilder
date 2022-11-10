@@ -1,0 +1,47 @@
+! git clone https://github.com/ultralytics/yolov5.git
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+%cd yolov5
+%pip install -qr requirements.txt
+
+import torch
+import os
+from IPython.display import Image, clear_output
+from google.colab import files
+import shutil
+import subprocess
+
+for i in [("/content/drive/MyDrive/dataset/planes_and_helicopters_tiles.yaml","/content/yolov5/data/planes_and_helicopters_tiles.yaml"),("/content/drive/MyDrive/dataset/planes_and_helicopters.yaml","/content/yolov5/data/planes_and_helicopters.yaml"),("/content/drive/MyDrive/dataset/planes.yaml","/content/yolov5/data/planes.yaml")]:
+  src_file = i[0]
+  dst_file = i[1]
+  shutil.copy(src_file, dst_file)
+
+!python val.py --weights /content/drive/MyDrive/dataset/weights_collection/zeile11_best.pt --img 1280 --data planes_and_helicopters.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile11_validation
+
+!python val.py --weights /content/drive/MyDrive/dataset/weights_collection/zeile16_best.pt --img 1920 --data planes_and_helicopters.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile16_validation
+
+!python val.py --weights /content/drive/MyDrive/dataset/weights_collection/zeile17_best.pt --img 1280 --data planes.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile17_validation
+
+!python val.py --weights /content/drive/MyDrive/dataset/weights_collection/zeile18_best.pt --img 1280 --data planes_and_helicopters.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile18_validation
+
+!python train.py --weights yolov5s.pt --epochs 300 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile24_T2_Tiled_TrainingData --cache
+
+!python train.py --hyp data/hyps/hyp.VOC.yaml --weights /content/drive/MyDrive/dataset/colab_exports/Zeile24_Tiled_TrainingData/weights/best.pt --epochs 200 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile24_FineTune_Tiled_TrainingData --cache
+
+!python train.py --freeze 10 --weights yolov5s.pt --epochs 300 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile24_Freeze_Tiled_TrainingData --cache
+
+!python train.py --hyp data/hyps/hyp.VOC.yaml --weights /content/drive/MyDrive/dataset/colab_exports/Zeile24_Freeze_Tiled_TrainingData/weights/best.pt --epochs 200 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile24_Freeze_FineTune_Tiled_TrainingData --cache
+
+!python train.py --weights yolov5m.pt --epochs 300 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile29_Mmod_Background_Tiled_TrainingData --cache
+
+!python train.py --weights yolov5l.pt --epochs 150 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile30_Lmod_Background_Tiled_TrainingData --cache
+
+!python train.py --weights yolov5x.pt --epochs 150 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile31_XLmod_Background_Tiled_TrainingData --cache
+
+!python train.py --hyp data/hyps/hyp.VOC.yaml --weights /content/drive/MyDrive/dataset/colab_exports/Zeile29_Mmod_Background_Tiled_TrainingData/weights/best.pt --epochs 300 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile32_Mmod_Background_Tiled_TrainingData_HypVOC --cache
+
+!python train.py --weights /content/drive/MyDrive/dataset/colab_exports/Zeile31_XLmod_Background_Tiled_TrainingData2/weights/best.pt --epochs 300 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile33_XLmod_Background_Tiled_TrainingData --cache
+
+!python train.py --weights /content/drive/MyDrive/dataset/colab_exports/Zeile31_XLmod_Background_Tiled_TrainingData2/weights/best.pt --epochs 150 --batch 30 --img 640 --data planes_and_helicopters_tiles.yaml --project /content/drive/MyDrive/dataset/colab_exports --name Zeile34_XLmod_Background_Tiled_TrainingData --cache --evolve 10

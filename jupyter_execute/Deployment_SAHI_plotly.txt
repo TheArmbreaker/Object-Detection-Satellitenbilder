@@ -1,0 +1,111 @@
+! git clone https://github.com/ultralytics/yolov5.git
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+%cd yolov5
+%pip install -qr requirements.txt
+!pip install -U sahi yolov5
+
+import sys
+import cv2
+from PIL import Image as Img
+from IPython.display import Image, display, HTML
+
+from sahi.utils.yolov5 import ( 
+    download_yolov5s6_model,
+)
+
+# import required functions, classes
+from sahi import AutoDetectionModel
+from sahi.utils.cv import read_image
+from sahi.utils.file import download_from_url
+from sahi.predict import get_prediction, get_sliced_prediction, predict
+
+import shutil
+import numpy as np
+import pandas as pd
+import plotly.express as px
+from plotly.offline import init_notebook_mode
+
+def configure_plotly_browser_state():
+  import IPython
+  display(IPython.core.display.HTML('''
+        <script src="/static/components/requirejs/require.js"></script>
+        <script>
+          requirejs.config({
+            paths: {
+              base: '/static/base',
+              plotly: 'https://cdn.plot.ly/plotly-latest.min.js?noext',
+            },
+          });
+        </script>
+        '''))
+
+yolov5_model_path = '/content/drive/MyDrive/dataset/colab_exports/Zeile31_XLmod_Background_Tiled_TrainingData2/weights/best.pt'
+_images = list()
+_images.append("/content/drive/MyDrive/dataset/tests/MCAS_Iwakuni_1_100m.png")
+_images.append("/content/drive/MyDrive/dataset/tests/MCAS_Iwakuni_2_100m.png")
+_images.append("/content/drive/MyDrive/dataset/tests/RUS_Severomorsk.jpg")
+_images.append("/content/drive/MyDrive/dataset/tests/DEU_Ansbach_Katterbach.jpg")
+
+
+detection_model = AutoDetectionModel.from_pretrained(
+    model_type='yolov5',
+    model_path=yolov5_model_path,
+    confidence_threshold=0.4,
+    #device="cpu",
+    device="cuda:0"
+)
+
+result_list = list()
+for image in _images: 
+  results = get_sliced_prediction(
+        image,
+        detection_model,
+        slice_height = 256,
+        slice_width = 256,
+        overlap_height_ratio = 0.2,
+        overlap_width_ratio = 0.2
+        )
+  loc = image.split("/")[-1].split(".")[0]
+  result_list_cache = results.to_coco_annotations()
+  results.export_visuals(export_dir=f'/content/drive/MyDrive/dataset/tests/sahi_exp/{loc}')
+  for i in result_list_cache:
+    i['image_id'] = loc
+  result_list.extend(result_list_cache)
+
+df = pd.DataFrame.from_dict(result_list)
+
+df.tail()
+
+# Zusätzlicher Screenshot für Iwakuni
+df['location'] = np.where(df['image_id'].str.contains('100m'),'MCAS_Iwakuni',df['image_id'])
+df['location'] = df['location'].str.replace('_',' ')
+
+configure_plotly_browser_state()
+init_notebook_mode(False) # To show plotly plots when notebook is exported to html
+fig = px.bar(
+    df.groupby(['location','category_name']).count().reset_index(),
+    x='location',
+    y='category_id',
+    color='category_name',
+    barmode='group'
+    )
+fig.update_layout(
+    xaxis_title="Standorte",
+    yaxis_title="Anzahl",
+    legend_title="Kategorie",
+    title='Anzahl an Fluggerät nach Standort und Kategorie'
+)
+newnames = {'plane':'Flugzeuge', 'helicopter': 'Helikopter'}
+fig.for_each_trace(lambda t: t.update(name = newnames[t.name],
+                                      legendgroup = newnames[t.name],
+                                      hovertemplate = t.hovertemplate.replace(t.name, newnames[t.name])
+                                     )
+                    )
+fig.show()
+
+Image("/content/drive/MyDrive/dataset/tests/sahi_exp/MCAS_Iwakuni_1_100m/prediction_visual.png")
+
+df[df['image_id']=='MCAS_Iwakuni_1_100m']

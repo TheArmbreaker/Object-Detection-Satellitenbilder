@@ -1,0 +1,1120 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Data Preparation &#8212; Object Detection auf Satellitenbilder</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="shortcut icon" href="_static/icons8-fighter-jet-96.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Understanding - Health Check" href="Health_Check.html" />
+    <link rel="prev" title="YOLOv5 - Anwendungsbeispiel" href="B2Spirit.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/icons8-fighter-jet-96.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Object Detection auf Satellitenbilder</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="Introduction.html">
+                    Einleitung
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  YOLOv5
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Einrichten_YOLOv5.html">
+   Grundlagen
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="B2Spirit.html">
+   Anwendungsbeispiel Militär
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Data
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Preparation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Health_Check.html">
+   Understanding
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Data_Enrichment.html">
+   Enrichment
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Machine Learning
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Trainings_Validations.html">
+   Training und Validation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="all_models.html">
+   Evaluation und Optimierung
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Use Case Anwendung
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Deployment_PoC.html">
+   Proof of Concept
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Deployment_SAHI_plotly.html">
+   Verbesserte Erkennung
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Deployment_Ausblick_Reflektion.html">
+   Ausblick &amp; Reflektion
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  ---------
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="myfunc.html">
+   func.py-File
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Literatur.html">
+   Literaturverzeichnis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Figures_Tables.html">
+   Abbildungs- und Tabellenverzeichnis
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/TheArmbreaker/Object-Detection-Satellitenbilder/master?urlpath=tree/First_steps.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/TheArmbreaker/Object-Detection-Satellitenbilder"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/First_steps.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#explorative-datenanalyse">
+   Explorative Datenanalyse
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#filtern-der-label-dateien-und-bilder">
+     Filtern der Label-Dateien und Bilder
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#bilder-und-labels">
+     Bilder und Labels
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#automation-bildanpassung-yolo-formt">
+     Automation Bildanpassung YOLO-Formt
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#naherungsnachweis-uber-flache">
+   Näherungsnachweis über Fläche
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Data Preparation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#explorative-datenanalyse">
+   Explorative Datenanalyse
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#filtern-der-label-dateien-und-bilder">
+     Filtern der Label-Dateien und Bilder
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#bilder-und-labels">
+     Bilder und Labels
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#automation-bildanpassung-yolo-formt">
+     Automation Bildanpassung YOLO-Formt
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#naherungsnachweis-uber-flache">
+   Näherungsnachweis über Fläche
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="data-preparation">
+<h1>Data Preparation<a class="headerlink" href="#data-preparation" title="Permalink to this headline">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.preprocessing.image</span> <span class="kn">import</span> <span class="n">load_img</span><span class="p">,</span> <span class="n">img_to_array</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">box</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">func</span> <span class="kn">import</span> <span class="o">*</span> 
+<span class="o">%</span><span class="k">load_ext</span> autoreload
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#USER = &quot;Sophie&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#user = {&quot;Sophie&quot;: [&quot;C:/dev/Object-Detection-Air-Base-Military-Equipment/data/labelTxt&quot;, &quot;C:/dev/Object-Detection-Air-Base-Military-Equipment/data/images&quot;],</span>
+<span class="c1">#        &quot;Markus&quot;: [&quot;/Users/markus/NoCloudDoks/Offline_Repos/Object-Detection-Air-Base-Military-Equipment/data/labelTxt/&quot;, &quot;&quot;],}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="ch">#!pip install opencv-python</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="explorative-datenanalyse">
+<h2>Explorative Datenanalyse<a class="headerlink" href="#explorative-datenanalyse" title="Permalink to this headline">#</a></h2>
+<section id="filtern-der-label-dateien-und-bilder">
+<h3>Filtern der Label-Dateien und Bilder<a class="headerlink" href="#filtern-der-label-dateien-und-bilder" title="Permalink to this headline">#</a></h3>
+<p>Im Projekt wird eine Object Detection von Helikoptern und Flugzeugen auf Satelitten Bilder trainiert. Im zugrundelegenden “DOTA”-Data Set sind Bilder mit unterschiedlichen Objekten, wie verschiedene Fahrzeuge oder Tennisplätze, enthalten. Zum Trainieren der Object Detection für diesen Anwendungsfall werden nur Bilder mit Helikopter und Flugzeugen benötigt. Daher werden diese Bilder und die zugehörigen Label-Datein gefiltert.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Liste mit Dateinamen </span>
+<span class="n">dir_path</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="n">USER</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">img_path</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="n">USER</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_list_imag_label_files</span><span class="p">(</span><span class="n">label_path</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; </span>
+<span class="sd">    input: the path to the label directory </span>
+<span class="sd">    return: *tuples*: list of labels and list of images with &#39;helicopter&#39; and &#39;plane&#39;</span>
+<span class="sd">    description: reduce file by &#39;helicopter&#39; and &#39;plane&#39; only</span>
+<span class="sd">    &#39;&#39;&#39;</span> 
+    <span class="n">img_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">text_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">label_list</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">label_path</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">label_list</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span>  <span class="n">label_path</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">filename</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;plane&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+                <span class="n">png</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span>
+                <span class="n">text_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+                <span class="n">img_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">png</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;helicopter&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+                <span class="n">png</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span>
+                <span class="n">text_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+                <span class="n">img_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">png</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img_list</span><span class="p">,</span> <span class="n">text_list</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">list_img</span><span class="p">,</span> <span class="n">list_text</span> <span class="o">=</span> <span class="n">get_list_imag_label_files</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plausibilitätscheck: </span><span class="se">\n</span><span class="s2">Länge Image-List: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">list_img</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">Länge Label-List: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">list_text</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Plausibilitätscheck: 
+Länge Image-List: 70 
+Länge Label-List: 70
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="bilder-und-labels">
+<h3>Bilder und Labels<a class="headerlink" href="#bilder-und-labels" title="Permalink to this headline">#</a></h3>
+<p>Nachfolgenden werden die ersten drei Helikotper- und Flugzeug-Bilder mit der <code class="docutils literal notranslate"><span class="pre">load_img</span></code>- Methode aus der Tensorflow-Bibliothek abgerufen und mit <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> dargestellt.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pic_1</span> <span class="o">=</span> <span class="n">load_img</span><span class="p">(</span><span class="n">img_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">list_img</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">pic_2</span> <span class="o">=</span> <span class="n">load_img</span><span class="p">(</span><span class="n">img_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">list_img</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">pic_3</span> <span class="o">=</span> <span class="n">load_img</span><span class="p">(</span><span class="n">img_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">list_img</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pic_1</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pic_2</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pic_3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1738902bdf0&gt;
+</pre></div>
+</div>
+<img alt="_images/First_steps_13_1.png" src="_images/First_steps_13_1.png" />
+</div>
+</div>
+<figure class="align-default" id="fs-plain-data">
+<figcaption>
+<p><span class="caption-number">Fig. 19 </span><span class="caption-text">Darstellung der Rohdaten</span><a class="headerlink" href="#fs-plain-data" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Die Bilder haben unterschiedlichen Größen (Shapes), unterschiedliche Zoom-Stufen und sind teilweise rotiert. Im näcshten Schritt überprüfen wir ob die Label zu den Objekten passen. Dafür müssen zuerst die Koordinaten der Bounding-Box und die Labels aus den Datein extrahiert werden.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_list_boxes_labels</span><span class="p">(</span><span class="n">label_path</span><span class="p">,</span> <span class="n">label_file</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; </span>
+<span class="sd">    input: the path to the label directory and the label file name </span>
+<span class="sd">    return: list of bounding box and list of related label</span>
+<span class="sd">    description: open label files, extract bounding box coordinates and translate label into 0,1</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">boxes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">label_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">label_file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;plane&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">box</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+                <span class="n">boxes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
+                <span class="c1">#for plane label = 0</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;helicopter&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">box</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+                <span class="n">boxes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
+                <span class="c1">#for helicotper label = 1</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">boxes</span><span class="p">,</span> <span class="n">labels</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">list_boxes_1</span><span class="p">,</span> <span class="n">list_labels_1</span> <span class="o">=</span> <span class="n">get_list_boxes_labels</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span><span class="n">list_text</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">list_boxes_2</span><span class="p">,</span> <span class="n">list_labels_2</span> <span class="o">=</span> <span class="n">get_list_boxes_labels</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span><span class="n">list_text</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">list_boxes_3</span><span class="p">,</span> <span class="n">list_labels_3</span> <span class="o">=</span> <span class="n">get_list_boxes_labels</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span><span class="n">list_text</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Für die weitere Nutzung der Bounding Boxes muss ihr Format geändert werden.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># arrange the Boxes for</span>
+<span class="k">def</span> <span class="nf">reshap_bb</span><span class="p">(</span><span class="n">boxes_list</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    input: list of bounding boxes</span>
+<span class="sd">    return: reshaped list of bounding boxes</span>
+<span class="sd">    description: change the shape and data type of the bounding boxes </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">box_reshap</span> <span class="o">=</span> <span class="nb">list</span> <span class="p">()</span> 
+    <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">boxes_list</span><span class="p">:</span>
+        <span class="n">temp</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">box</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">box_reshap</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">box_reshap</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">list_boxes_1</span> <span class="o">=</span> <span class="n">reshap_bb</span><span class="p">(</span><span class="n">list_boxes_1</span><span class="p">)</span>
+<span class="n">list_boxes_2</span> <span class="o">=</span> <span class="n">reshap_bb</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">)</span>
+<span class="n">list_boxes_3</span> <span class="o">=</span> <span class="n">reshap_bb</span><span class="p">(</span><span class="n">list_boxes_3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Für die Darstellung der BB Matplotlib müssen die Orginalbilder zu erst in ein numpy-Array umgewandelt werden. Die BB können nachfolgend mit der Methode <code class="docutils literal notranslate"><span class="pre">polylines</span></code> dargestellt werden.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">numpy_image_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">img_to_array</span><span class="p">(</span><span class="n">pic_1</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">numpy_image_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">img_to_array</span><span class="p">(</span><span class="n">pic_2</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">numpy_image_3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">img_to_array</span><span class="p">(</span><span class="n">pic_3</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">rectangle</span> <span class="ow">in</span> <span class="n">list_boxes_1</span><span class="p">:</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">numpy_image_1</span><span class="p">,[</span><span class="n">rectangle</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">rectangle</span> <span class="ow">in</span> <span class="n">list_boxes_2</span><span class="p">:</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,[</span><span class="n">rectangle</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">rectangle</span> <span class="ow">in</span> <span class="n">list_boxes_3</span><span class="p">:</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">numpy_image_3</span><span class="p">,[</span><span class="n">rectangle</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">numpy_image_1</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">numpy_image_3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x173f19ebd90&gt;
+</pre></div>
+</div>
+<img alt="_images/First_steps_23_1.png" src="_images/First_steps_23_1.png" />
+</div>
+</div>
+<figure class="align-default" id="fs-plain-data2">
+<figcaption>
+<p><span class="caption-number">Fig. 20 </span><span class="caption-text">Darstellung der Rohdaten mit Bounding Boxen</span><a class="headerlink" href="#fs-plain-data2" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Die Bounding Box sind keine regelmäßigen Rechtecke und rotiert.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">numpy_image_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">img_to_array</span><span class="p">(</span><span class="n">pic_2</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">cv2</span><span class="o">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,[</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">]],</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span><span class="mi">350</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span><span class="mi">1050</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,</span><span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x173813a1040&gt;
+</pre></div>
+</div>
+<img alt="_images/First_steps_26_1.png" src="_images/First_steps_26_1.png" />
+</div>
+</div>
+<figure class="align-default" id="fs-plain-data3">
+<figcaption>
+<p><span class="caption-number">Fig. 21 </span><span class="caption-text">Rohdaten mit Bounding Boxen als unregelmäßiges Rechteck</span><a class="headerlink" href="#fs-plain-data3" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Um das YOLO-Format für die gegeben Bounding Boxes zu erhalten, wird wie folgt vorgegangen:</p>
+<ol class="simple">
+<li><p>Bestimmung von zwei gegenüberliegenden Eckpunkten eines regelmäßigen Rechtecks</p></li>
+<li><p>Bestimmung des Mittelpunkts</p></li>
+<li><p>Ermitteln Breite und Höhe der Bounding Box</p></li>
+<li><p>Normierung der Bounding Boxes zur Bildgröße</p></li>
+</ol>
+<p>Zur Näherung des regelmäßige Rechtecks werden zuerst die äußersten Punkte des Polygons angenommen.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verwenden der kleinsten und größten Punkte --&gt; blaue Box</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span><span class="mi">350</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span><span class="mi">1050</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,</span><span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x17381414820&gt;
+</pre></div>
+</div>
+<img alt="_images/First_steps_30_1.png" src="_images/First_steps_30_1.png" />
+</div>
+</div>
+<figure class="align-default" id="fs-plain-data4">
+<figcaption>
+<p><span class="caption-number">Fig. 22 </span><span class="caption-text">Rohdaten mit Bounding Boxen Anpassung 1</span><a class="headerlink" href="#fs-plain-data4" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Auf den Plot wird deutlich, dass das Rechteck sehr groß ist und unnötige Information mit ins Training einfließen würden.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verwenden der zweit-kleinsten und zweit-größten Punkte --&gt; grüne Box</span>
+<span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">2</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">1628</span><span class="p">,</span><span class="mi">1226</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span><span class="mi">350</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span><span class="mi">1050</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,</span><span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x17385c63fd0&gt;
+</pre></div>
+</div>
+<img alt="_images/First_steps_33_1.png" src="_images/First_steps_33_1.png" />
+</div>
+</div>
+<figure class="align-default" id="fs-plain-data5">
+<figcaption>
+<p><span class="caption-number">Fig. 23 </span><span class="caption-text">Rohdaten mit Bounding Boxen Anpassung 2</span><a class="headerlink" href="#fs-plain-data5" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Das grün dargestellt Rechteck aus den kleinsten Punkten schneidet Teile des Flugzeugs ab und ist deswegen ebenfalls ungeeignet.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verwenden der Mittelwerte aus zwei kleinsten und zwei größten Punkte --&gt; gelbe Box</span>
+<span class="n">x_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">x_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[:</span><span class="mi">2</span><span class="p">]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">y_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">y_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[:</span><span class="mi">2</span><span class="p">]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,(</span><span class="n">x_max</span><span class="p">,</span><span class="n">y_max</span><span class="p">)</span> <span class="p">,(</span><span class="n">x_min</span><span class="p">,</span><span class="n">y_min</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">1628</span><span class="p">,</span><span class="mi">1226</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span><span class="mi">350</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span><span class="mi">1050</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,</span><span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x17385caaeb0&gt;
+</pre></div>
+</div>
+<img alt="_images/First_steps_36_1.png" src="_images/First_steps_36_1.png" />
+</div>
+</div>
+<figure class="align-default" id="fs-plain-data6">
+<figcaption>
+<p><span class="caption-number">Fig. 24 </span><span class="caption-text">Rohdaten mit Bounding Boxen Anpassung 3</span><a class="headerlink" href="#fs-plain-data6" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Zur Nährung der Bounding Boxen wird aus diesem Mittelwerte des grünen und blauen Rechtecks gewählt.</p>
+<p>Zur Bestimmung des Mittelpunkts wird die Centroid-Funktion aus der Polygon-Bibliothek genutzt.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">centroid_coor</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">])</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">centroid_coor</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(941.211419610737, 438.90179257756046)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">func</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">example_bb</span> <span class="o">=</span> <span class="n">get_regular_yolov</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span> <span class="n">numpy_image_2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">example_bb</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;centroid&#39;: (941, 439), &#39;coord_one&#39;: (998, 486), &#39;coord_two&#39;: (886, 393)}
+</pre></div>
+</div>
+</div>
+</div>
+<p>Diese ist bereits in der Funktion <code class="docutils literal notranslate"><span class="pre">get_regular_yolov</span></code> angewandt.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">numpy_image_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">img_to_array</span><span class="p">(</span><span class="n">pic_2</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1">#Rücksetzen des Bidles</span>
+<span class="n">cv2</span><span class="o">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,</span> <span class="p">[</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">]],</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span><span class="mi">350</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span><span class="mi">1050</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">example_bb</span><span class="p">[</span><span class="s1">&#39;centroid&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">example_bb</span><span class="p">[</span><span class="s1">&#39;centroid&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">numpy_image_2</span><span class="p">,</span><span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x17385d147c0&gt;
+</pre></div>
+</div>
+<img alt="_images/First_steps_43_1.png" src="_images/First_steps_43_1.png" />
+</div>
+</div>
+<figure class="align-default" id="fs-plain-data7">
+<figcaption>
+<p><span class="caption-number">Fig. 25 </span><span class="caption-text">Rohdaten mit Bounding Box Mittelpunkt</span><a class="headerlink" href="#fs-plain-data7" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Aus den berechneten Eckpunkten wird die Höhe und Länges des regelmäßigen Rechtecks bestimmt. Diese Information und der Mittelpunkt werden anschließend relativ zur Bildgröße normiert.
+Die erhalten Werte (normierte Höhe, Länge und Mittelpunkt) entsprechen dem YOLO-Format.
+Diese Schritte sind ebenfalls in der Funktion <code class="docutils literal notranslate"><span class="pre">get_regular_yolov</span></code> enthalten. Die folgende Funktion ist Teil der <a class="reference external" href="http://func.py">func.py</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_regular_yolov</span><span class="p">(</span><span class="n">myArray</span><span class="p">,</span><span class="n">np_img</span><span class="p">,</span><span class="n">rect_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    takes numpy array of shape (4,2) from the label-files and the image as array</span>
+<span class="sd">    returns yolov5 format with normalized centriod, width and height</span>
+
+<span class="sd">    if rect_plot is False a yolo format is returned</span>
+<span class="sd">    if rect_plot is True a dictionary with coordinates for ploting is returned</span>
+
+<span class="sd">    first calculation of mean of two lowest and two heighest values for x and y axis</span>
+<span class="sd">    second calculation of centroid coordinates with shapely function Polygon</span>
+<span class="sd">    third extraction of picture shape from image (as array)</span>
+<span class="sd">    fourth normalization according to yolo requirements for labeling</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">x_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">myArray</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+    <span class="n">x_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">myArray</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])[:</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">y_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">myArray</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+    <span class="n">y_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">myArray</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])[:</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">centroid</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">myArray</span><span class="p">)</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">w_img</span> <span class="o">=</span> <span class="n">np_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">h_img</span> <span class="o">=</span> <span class="n">np_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">norm_centroid_x</span> <span class="o">=</span> <span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">w_img</span>
+    <span class="n">norm_centroid_y</span> <span class="o">=</span> <span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">h_img</span>
+    <span class="n">norm_width</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_max</span><span class="o">-</span><span class="n">x_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">w_img</span>
+    <span class="n">norm_height</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_max</span><span class="o">-</span><span class="n">y_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">h_img</span>
+
+    <span class="k">if</span> <span class="n">rect_plot</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;centroid&#39;</span><span class="p">:(</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)),</span>
+            <span class="s1">&#39;coord_one&#39;</span><span class="p">:(</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">x_max</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">y_max</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)),</span>
+            <span class="s1">&#39;coord_two&#39;</span><span class="p">:(</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">x_min</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">y_min</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+            <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">norm_centroid_x</span><span class="p">,</span><span class="n">norm_centroid_y</span><span class="p">,</span><span class="n">norm_width</span><span class="p">,</span><span class="n">norm_height</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">get_regular_yolov</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="n">numpy_image_2</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;centroid&#39;: (874, 605), &#39;coord_one&#39;: (931, 668), &#39;coord_two&#39;: (814, 540)}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">get_regular_yolov</span><span class="p">(</span><span class="n">list_boxes_2</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span><span class="n">numpy_image_2</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="automation-bildanpassung-yolo-formt">
+<h3>Automation Bildanpassung YOLO-Formt<a class="headerlink" href="#automation-bildanpassung-yolo-formt" title="Permalink to this headline">#</a></h3>
+<p>Die oben gezeigten Schritte müssen alle für Trainings- und Validierungsdaten ausgeführt werden. Dazu werden die oben beschriebenen Funktionen in einer For-Schleife angewendet.
+Vorraussetzung für die Automation ist nur die Ausführung des Notebook-Kopfs (Importe und Konfigurationen).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">list_images_files</span><span class="p">,</span> <span class="n">list_text_files</span><span class="o">=</span> <span class="n">get_list_imag_label_files</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">label_file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_text</span><span class="p">):</span>
+    
+    <span class="c1">#Get Image</span>
+    <span class="n">temp_img</span> <span class="o">=</span> <span class="n">load_img</span><span class="p">(</span><span class="n">img_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">list_images_files</span><span class="p">[</span><span class="n">count</span><span class="p">])</span>
+    <span class="n">temp_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">img_to_array</span><span class="p">(</span><span class="n">temp_img</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1">#Get Boxes and labels</span>
+    <span class="n">temp_box_list_single_file</span><span class="p">,</span> <span class="n">temp_label_list_single_file</span> <span class="o">=</span> <span class="n">get_list_boxes_labels</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span><span class="n">label_file</span><span class="p">)</span>
+    
+    <span class="c1">#Reshap Boxes</span>
+    <span class="n">temp_box_list_single_file</span> <span class="o">=</span> <span class="n">reshap_bb</span><span class="p">(</span><span class="n">temp_box_list_single_file</span><span class="p">)</span>
+    
+    <span class="c1">#Create Yolo Label File</span>
+    <span class="n">lines_text_file</span><span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">cnt</span><span class="p">,</span> <span class="n">single_box</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">temp_box_list_single_file</span><span class="p">):</span>
+       <span class="n">yolo_boxes</span> <span class="o">=</span> <span class="n">get_regular_yolov</span><span class="p">(</span><span class="n">single_box</span><span class="p">,</span><span class="n">temp_image</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+       <span class="n">lines_text_file</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">temp_label_list_single_file</span><span class="p">[</span><span class="n">cnt</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">yolo_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">yolo_boxes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">yolo_boxes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">yolo_boxes</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1">#Write Labelfile</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data_new\labels\</span><span class="si">{</span><span class="n">txt_file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines_text_file</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1">#Copie Imagefile</span>
+    <span class="n">img_file_name</span> <span class="o">=</span> <span class="n">list_images</span><span class="p">[</span><span class="n">count</span><span class="p">]</span>
+    <span class="n">src_path</span> <span class="o">=</span> <span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">dev</span><span class="se">\\</span><span class="s2">Object-Detection-Air-Base-Military-Equipment</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">img_file_name</span>
+    <span class="n">dst_path</span> <span class="o">=</span> <span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">dev</span><span class="se">\\</span><span class="s2">Object-Detection-Air-Base-Military-Equipment</span><span class="se">\\</span><span class="s2">data_new</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">img_file_name</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">src_path</span><span class="p">,</span> <span class="n">dst_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="naherungsnachweis-uber-flache">
+<h2>Näherungsnachweis über Fläche<a class="headerlink" href="#naherungsnachweis-uber-flache" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Red rectangle / polygon</span>
+<span class="n">Polygon</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span><span class="o">.</span><span class="n">area</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1857.5
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Yellow rectangle</span>
+<span class="n">rect</span><span class="o">.</span><span class="n">area</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1764.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Green rectangle</span>
+<span class="n">box</span><span class="p">(</span><span class="mi">1607</span><span class="p">,</span><span class="mi">1214</span><span class="p">,</span><span class="mi">1650</span><span class="p">,</span><span class="mi">1239</span><span class="p">)</span><span class="o">.</span><span class="n">area</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1075.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Blue rectangle</span>
+<span class="n">box</span><span class="p">(</span><span class="mi">1602</span><span class="p">,</span><span class="mi">1202</span><span class="p">,</span><span class="mi">1657</span><span class="p">,</span><span class="mi">1250</span><span class="p">)</span><span class="o">.</span><span class="n">area</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2640.0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="B2Spirit.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">YOLOv5 - Anwendungsbeispiel</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="Health_Check.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Data Understanding - Health Check</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Markus Armbrecht und Sophie Horn<br/>
+  
+    <div class="extra_footer">
+      <div> Projektarbeit zu Machine Learning Algorithms and Implementation<br> im Wintersemester 2022/23<br> <br> <a target="_blank" href="https://icons8.com/icon/8WCsjEbZsvxf/fighter-jet">Fighter Jet</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a> <br> <a href="https://github.com/TheArmbreaker" target="_blank"><img src="https://img.shields.io/badge/Github-Markus%20Armbrecht-orange" alt="Github Markus Armbrecht"></a> <a href="https://github.com/sophie-juliette" target="_blank"><img src="https://img.shields.io/badge/Github-Sophie%20Horn-brightgreen" alt="Github Sophie Horn"></a> </div>
+    </div>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

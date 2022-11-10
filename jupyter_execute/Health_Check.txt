@@ -1,0 +1,128 @@
+import plotly.io as pio
+import os
+import re
+from PIL import Image
+pio.templates.default = "plotly_white"
+import plotly.graph_objects as go
+import plotly.express as px
+import pandas as pd
+import numpy as np
+from plotly.offline import init_notebook_mode
+
+ from google.colab import drive
+ drive.mount('/content/drive')
+
+def configure_plotly_browser_state():
+  import IPython
+  display(IPython.core.display.HTML('''
+        <script src="/static/components/requirejs/require.js"></script>
+        <script>
+          requirejs.config({
+            paths: {
+              base: '/static/base',
+              plotly: 'https://cdn.plot.ly/plotly-latest.min.js?noext',
+            },
+          });
+        </script>
+        '''))
+
+myPathLabeltrain = '/content/drive/MyDrive/dataset/labels/train/'
+myPathLabelval = '/content/drive/MyDrive/dataset/labels/validation/'
+
+myPathImagestrain = '/content/drive/MyDrive/dataset/images/removed_background_train/'
+myPathImagesval = '/content/drive/MyDrive/dataset/images/removed_background_validation/'
+
+no_background_train = len(os.listdir(myPathLabeltrain))
+no_background_val = len(os.listdir(myPathLabelval))
+
+print(f"Anzahl Trainingsbilder ohne Hintergrundbilder: {no_background_train} \nAnzahl Testbilder ohne Hintergrundbilder: {no_background_val} \n")
+print(f"Ergeben einen Split von {round(no_background_val/(no_background_train+no_background_val),2)*100} % Testdaten")
+
+background_train = len(os.listdir(myPathImagestrain))
+background_val = len(os.listdir(myPathImagesval))
+print(f"Anzahl Trainingsbilder mit Hintergrundbilder: {background_train} \nAnzahl Testbilder mit Hintergrundbilder: {background_val} \n")
+print(f"Ergeben einen Split von {round(background_val/(background_train+background_val),2)*100} % Testdaten")
+
+all_labels_train = os.listdir(myPathLabeltrain)
+
+number_heli = 0
+number_planes = 0
+number_images_heli = 0
+number_images_plane = 0
+for file in all_labels_train:
+  heli = False
+  plane = False
+  path = myPathLabeltrain + file
+  with open(path) as f:
+    for line in f:
+      if (re.match("^0", line)):
+        number_planes =  number_planes +1
+        plane = True
+      elif (re.match("^1", line)):
+        number_heli = number_heli +1 
+        heli = True
+  if plane == True: 
+    number_images_plane = number_images_plane +1
+  if heli == True: 
+    number_images_heli = number_images_heli + 1
+
+
+configure_plotly_browser_state()
+init_notebook_mode(False) # To show plotly plots when notebook is exported to html
+instances=['planes', 'helicopter']
+
+fig = go.Figure([go.Bar(x=instances, y=[number_planes, number_heli])])
+fig.show()
+
+
+
+instances=['images planes', 'images helicopter']
+configure_plotly_browser_state()
+init_notebook_mode(False) # To show plotly plots when notebook is exported to html
+fig = go.Figure([go.Bar(x=instances, y=[number_images_plane, number_images_heli])])
+fig.show()
+
+
+all_images_train = os.listdir(myPathImagestrain)
+
+def get_num_pixels(filepath):
+    width, height = Image.open(filepath).size
+    return width, height
+
+width_size = list()
+height_size = list()
+size_cat = list()
+
+for file in all_images_train:
+    path = myPathImagestrain + file
+    width, height = get_num_pixels(path)
+    if (width <= 640 and height <= 640): 
+      size_cat.append('opt')
+    elif (width <= 1280 and height <= 1280):
+      size_cat.append('big')
+    else:
+      size_cat.append('very big')
+    width_size.append(width)
+    height_size.append(height)
+
+print(np.median(width_size))
+print(np.median(height_size))
+
+df = pd.DataFrame(dict(
+    x = width_size,
+    y = height_size,
+    cat= size_cat
+))
+configure_plotly_browser_state()
+init_notebook_mode(False) # To show plotly plots when notebook is exported to html
+fig = px.scatter(df, x="x", y="y", color = "cat")
+fig.update_layout(
+        shapes=[
+            dict(
+                type= 'line',
+                yref= 'y', y0=0, y1= 12000,
+                xref= 'x', x0=0, x1= 12000
+        )])
+fig.add_vline(x=1280, line_width=1.5, line_dash="dash", line_color='#388A73',row=1,col=1)
+fig.add_hline(y=1280, line_width=1.5, line_dash="dash", line_color='#388A73',row=1,col=1)
+fig.show()

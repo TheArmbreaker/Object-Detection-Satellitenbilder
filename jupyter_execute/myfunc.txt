@@ -1,0 +1,95 @@
+import pandas as pd
+import numpy as np
+import os
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+import matplotlib.pyplot as plt
+import cv2
+from shapely.geometry import Polygon, box
+import shutil
+
+def get_list_imag_label_files(label_path):
+    ''' 
+    input: the path to the label directory 
+    return: *tuples*: list of labels and list of images with 'helicopter' and 'plane'
+    description: reduce file by 'helicopter' and 'plane' only
+    ''' 
+    img_list = list()
+    text_list = list()
+    label_list = os.listdir(label_path)
+    for filename in label_list:
+        path =  label_path + "\\" + filename
+        with open(path) as f:
+            if 'plane' in f.read():
+                png = str.split(filename, ".")[0] + ".png"
+                txt = str.split(filename, ".")[0] + ".txt"
+                text_list.append(txt)
+                img_list.append(png)
+            elif 'helicopter' in f.read():
+                png = str.split(filename, ".")[0] + ".png"
+                txt = str.split(filename, ".")[0] + ".txt"
+                text_list.append(txt)
+                img_list.append(png)
+    return img_list, text_list
+
+# FUNCTION: get_list_boxes_labels
+def get_list_boxes_labels(label_path, label_file):
+    ''' 
+    input: the path to the label directory and the label file name 
+    return: list of bounding box and list of related label
+    description: open label files, extract bounding box coordinates and translate label into 0,1
+    '''
+    boxes = list()
+    labels = list()
+    path = label_path + "/" + label_file
+    with open(path) as f:
+        for line in f:
+            if 'plane' in line:
+                box = str.split(line)[0:8]
+                boxes.append(box)
+                #for plane label = 0
+                labels.append(0)
+            elif 'helicopter' in line:
+                box = str.split(line)[0:8]
+                boxes.append(box)
+                #for helicotper label = 1
+                labels.append(1)
+    return boxes, labels
+
+
+def get_regular_yolov(myArray,np_img,rect_plot=False):
+    '''
+    takes numpy array of shape (4,2) from the label-files and the image as array
+    returns yolov5 format with normalized centriod, width and height
+
+    if rect_plot is False a yolo format is returned
+    if rect_plot is True a dictionary with coordinates for ploting is returned
+
+    first calculation of mean of two lowest and two heighest values for x and y axis
+    second calculation of centroid coordinates with shapely function Polygon
+    third extraction of picture shape from image (as array)
+    fourth normalization according to yolo requirements for labeling
+    '''
+
+    x_max = np.mean(np.sort(myArray[:,0])[-2:])
+    x_min = np.mean(np.sort(myArray[:,0])[:2])
+    y_max = np.mean(np.sort(myArray[:,1])[-2:])
+    y_min = np.mean(np.sort(myArray[:,1])[:2])
+    centroid = Polygon(myArray).centroid.coords[0]
+
+    w_img = np_img.shape[1]
+    h_img = np_img.shape[0]
+
+    norm_centroid_x = centroid[0] / w_img
+    norm_centroid_y = centroid[1] / h_img
+    norm_width = abs(x_max-x_min) / w_img
+    norm_height = abs(y_max-y_min) / h_img
+
+    if rect_plot:
+        return {
+            'centroid':(np.rint(centroid[0]).astype(int),np.rint(centroid[1]).astype(int)),
+            'coord_one':(np.rint(x_max).astype(int),np.rint(y_max).astype(int)),
+            'coord_two':(np.rint(x_min).astype(int),np.rint(y_min).astype(int))
+            }
+    else:
+        return (norm_centroid_x,norm_centroid_y,norm_width,norm_height)
+
